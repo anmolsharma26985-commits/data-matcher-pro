@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Data Matcher Pro</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Segoe UI", sans-serif;
+}
+
+body {
+    background: #0b1220;
+    color: #e5e7eb;
+    padding: 20px;
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 28px;
+    color: #60a5fa;
+}
+
+.container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.card {
+    background: #111827;
+    border: 1px solid #1f2937;
+    border-radius: 14px;
+    padding: 15px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.3);
+}
+
+.card h2 {
+    font-size: 16px;
+    margin-bottom: 10px;
+    color: #93c5fd;
+}
+
+textarea {
+    width: 100%;
+    height: 250px;
+    background: #0f172a;
+    border: 1px solid #1f2937;
+    border-radius: 10px;
+    padding: 10px;
+    color: #e5e7eb;
+    resize: none;
+    outline: none;
+}
+
+button {
+    margin-top: 10px;
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: bold;
+    background: linear-gradient(135deg, #3b82f6, #22c55e);
+    color: white;
+    transition: 0.3s;
+}
+
+button:hover {
+    transform: scale(1.03);
+}
+
+.result {
+    background: #0f172a;
+    border: 1px solid #1f2937;
+    height: 200px;
+    border-radius: 10px;
+    padding: 10px;
+    white-space: pre-wrap;
+    overflow-y: auto;
+}
+
+.copy {
+    background: linear-gradient(135deg, #6366f1, #a855f7);
+}
+
+footer {
+    text-align: center;
+    margin-top: 20px;
+    color: #6b7280;
+}
+</style>
+</head>
+
+<body>
+
+<h1>DATA MATCHER DASHBOARD</h1>
+
+<div class="container">
+
+    <!-- MASTER -->
+    <div class="card">
+        <h2>📦 Master Data</h2>
+        <textarea id="master"></textarea>
+    </div>
+
+    <!-- INCOMING -->
+    <div class="card">
+        <h2>📥 Incoming Data</h2>
+        <textarea id="incoming"></textarea>
+        <button onclick="findMatch()">Find Match</button>
+    </div>
+
+    <!-- MATCHED -->
+    <div class="card">
+        <h2>✅ Matched Data</h2>
+        <div class="result" id="matched"></div>
+        <button class="copy" onclick="copyData('matched')">Copy Matched</button>
+    </div>
+
+    <!-- NOT FOUND -->
+    <div class="card">
+        <h2>❌ Not Found Data</h2>
+        <div class="result" id="notfound"></div>
+        <button class="copy" onclick="copyData('notfound')">Copy Not Found</button>
+    </div>
+
+</div>
+
+<script>
+function findMatch() {
+    let master = document.getElementById("master").value
+        .split("\n").map(x => x.trim()).filter(Boolean);
+
+    let incoming = document.getElementById("incoming").value
+        .split("\n").map(x => x.trim()).filter(Boolean);
+
+    let matched = [];
+    let notFound = [];
+
+    incoming.forEach(item => {
+        if (master.includes(item)) {
+            matched.push(item);
+        } else {
+            notFound.push(item);
+        }
+    });
+
+    document.getElementById("matched").innerText =
+        matched.length ? matched.join("\n") : "No Match Found";
+
+    document.getElementById("notfound").innerText =
+        notFound.length ? notFound.join("\n") : "All Data Matched";
+}
+
+// 🔥 AUTO CLEAR WHEN MASTER EMPTY
+document.getElementById("master").addEventListener("input", function () {
+    let masterValue = this.value.trim();
+
+    if (masterValue === "") {
+        document.getElementById("matched").innerText = "";
+        document.getElementById("notfound").innerText = "";
+    }
+});
+
+function copyData(type) {
+    let text = document.getElementById(type).innerText;
+    navigator.clipboard.writeText(text);
+    alert("Copied Successfully!");
+}
+</script>
+
+<footer>
+    Design by <span>UC Team</span>
+</footer>
+
+</body>
+</html>
